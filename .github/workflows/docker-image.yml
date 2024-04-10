@@ -7,12 +7,19 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: |
+        docker build . --file Dockerfile --tag ${{ github.repository_owner }}/my-image-name:latest
+        docker tag ${{ github.repository_owner }}/my-image-name:latest registry.gitlab.com/${{ github.repository_owner }}/my-image-name:latest
+
+    - name: Log in to GitLab Container Registry
+      run: echo "$PERSONAL_ACCESS_TOKEN" | docker login registry.gitlab.com -u ${{ github.repository_owner }} --password-stdin
+
+    - name: Push image to GitLab Container Registry
+      run: docker push registry.gitlab.com/${{ github.repository_owner }}/my-image-name:latest
