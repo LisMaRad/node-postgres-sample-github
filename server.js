@@ -24,6 +24,9 @@ const Todo = sequelize.define("todo", {
   },
 });
 
+
+
+
 sequelize.sync().then(() => {
   Todo.count({ title: { [Sequelize.Op.Eq]: "Something" } }).then(
     (itemCount) => {
