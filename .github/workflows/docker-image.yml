@@ -19,7 +19,8 @@ jobs:
         docker tag lismarad/node-postgres-sample-github:latest registry.gitlab.com/lismarad/node-postgres-sample-github:latest
 
     - name: Log in to GitLab Container Registry
-      run: echo "$PERSONAL_ACCESS_TOKEN" | docker login registry.gitlab.com -u lismarad --password-stdin
+      run: docker login registry.gitlab.com -u lismarad -p $PERSONAL_ACCESS_TOKEN
 
     - name: Push image to GitLab Container Registry
-      run: docker push registry.gitlab.com/lismarad/node-postgres-sample-github:latest
+      run: docker push registry.gitlab.com/${{ github.repository_owner }}/node-postgres-sample-github:latest
+
