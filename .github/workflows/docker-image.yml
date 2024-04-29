@@ -11,16 +11,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Build the Docker image
-      run: |
-        docker build . --file Dockerfile --tag lismarad/node-postgres-sample-github:latest
-        docker tag lismarad/node-postgres-sample-github:latest registry.gitlab.com/lismarad/node-postgres-sample-github:latest
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Log in to GitLab Container Registry
-      run: docker login registry.gitlab.com -u lismarad -p $PERSONAL_ACCESS_TOKEN
+      - name: Build the Docker image
+        run: docker build -t ghcr.io/lismarad/node-postgres-sample-github:latest .
 
-    - name: Push image to GitLab Container Registry
-      run: docker push registry.gitlab.com/${{ github.repository_owner }}/node-postgres-sample-github:latest
-
+      - name: Push the Docker image to GitHub Container Registry
+        run: docker push ghcr.io/lismarad/node-postgres-sample-github:latest
